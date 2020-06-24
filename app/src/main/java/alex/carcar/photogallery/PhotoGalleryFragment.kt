@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 private const val TAG = "PhotoGalleryFragment"
+private const val COLUMN_SIZE = 360
 
 class PhotoGalleryFragment : Fragment() {
     private lateinit var photoGalleryViewModel: PhotoGalleryViewModel
     private lateinit var photoRecyclerView: RecyclerView
+    private var firstLoad: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +31,19 @@ class PhotoGalleryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_photo_gallery, container, false)
         photoRecyclerView = view.findViewById(R.id.photo_recycler_view)
-        photoRecyclerView.layoutManager = GridLayoutManager(context, 3)
+        photoRecyclerView.viewTreeObserver.addOnGlobalLayoutListener {
+            val w: Int = photoRecyclerView.width
+            setColumns(w)
+        }
         return view
+    }
+
+    private fun setColumns(w: Int) {
+        if (firstLoad) {
+            val cols: Int = w / COLUMN_SIZE;
+            photoRecyclerView.layoutManager = GridLayoutManager(context, cols)
+            firstLoad = false
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
