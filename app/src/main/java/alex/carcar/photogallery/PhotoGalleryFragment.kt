@@ -45,17 +45,24 @@ class PhotoGalleryFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_photo_gallery, container, false)
         photoRecyclerView = view.findViewById(R.id.photo_recycler_view)
         photoRecyclerView.layoutManager = GridLayoutManager(context, 3)
+        this.viewLifecycleOwnerLiveData.observe(
+            viewLifecycleOwner,
+            Observer { owner ->
+                if (owner != null) {
+                    photoGalleryViewModel.galleryItemLiveData.observe(
+                        viewLifecycleOwner,
+                        Observer { galleryItems ->
+                            photoRecyclerView.adapter = PhotoAdapter(galleryItems)
+                        }
+                    )
+                }
+            }
+        )
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        photoGalleryViewModel.galleryItemLiveData.observe(
-            viewLifecycleOwner,
-            Observer { galleryItems ->
-                photoRecyclerView.adapter = PhotoAdapter(galleryItems)
-            }
-        )
     }
 
     override fun onDestroyView() {
