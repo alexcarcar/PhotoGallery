@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 private const val TAG = "PhotoGalleryFragment"
+private const val PRELOAD_SIZE = 10
 
 class PhotoGalleryFragment : Fragment() {
     private lateinit var photoGalleryViewModel: PhotoGalleryViewModel
@@ -89,6 +90,17 @@ class PhotoGalleryFragment : Fragment() {
                     ?: ColorDrawable()
             holder.bindDrawable(placeholder)
             thumbnailDownloader.queueThumbnail(holder, galleryItem.url)
+
+            // preload images
+            var i = kotlin.math.max(0, position - PRELOAD_SIZE)
+            val max = kotlin.math.min(galleryItems.size - 1, position + PRELOAD_SIZE)
+            while (i < max) {
+                val url = galleryItems[i].url
+                if (thumbnailDownloader.lruCache[url] == null) {
+                    thumbnailDownloader.queueThumbnail(null, url)
+                }
+                i++
+            }
         }
     }
 
