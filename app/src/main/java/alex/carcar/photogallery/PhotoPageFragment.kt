@@ -3,9 +3,11 @@ package alex.carcar.photogallery
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -13,6 +15,7 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 
 private const val ARG_URI = "photo_page_url"
+private const val TAG = "PhotoPageFragment"
 
 class PhotoPageFragment : VisibleFragment() {
     private lateinit var uri: Uri
@@ -52,7 +55,31 @@ class PhotoPageFragment : VisibleFragment() {
             }
         }
         webView.webViewClient = WebViewClient()
-        webView.loadUrl(uri.toString())
+        webView.addJavascriptInterface(object : Any() {
+            @JavascriptInterface
+            fun send(message: String) {
+                Log.i(TAG, "Received message: $message")
+            }
+        }, "androidObject")
+        webView.loadData(
+            """
+            <html>
+                <head>
+                    <title>This is my test</title>
+                    <script>
+                        function sendToAndroid(message) {
+                            androidObject.send(message);
+                        }
+                    </script>
+                </head>
+                <body><h1>Hello World!</h1>
+                    <input type='button' value='In WebView!' onClick="javascript:sendToAndroid('In Android land')"/>
+                <body>
+            </html>""",
+            "text/html",
+            null
+        );
+        // webView.loadUrl(uri.toString())
         return view
     }
 
