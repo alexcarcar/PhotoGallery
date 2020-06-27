@@ -1,10 +1,11 @@
 package alex.carcar.photogallery
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
@@ -53,10 +54,23 @@ class PollWorker(val context: Context, workerParams: WorkerParameters) :
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build()
-
-            val notificationManager = NotificationManagerCompat.from(context)
-            notificationManager.notify(0, notification)
+            showBackgroundNotification(0, notification)
         }
         return Result.success()
+    }
+
+    private fun showBackgroundNotification(requestCode: Int, notification: Notification) {
+        val intent = Intent(ACTION_SHOW_NOTIFICATION).apply {
+            putExtra(REQUEST_CODE, requestCode)
+            putExtra(NOTIFICATION, notification)
+        }
+        context.sendOrderedBroadcast(intent, PERM_PRIVATE)
+    }
+
+    companion object {
+        const val ACTION_SHOW_NOTIFICATION = "alex.carcar.photogallery.SHOW_NOTIFICATION"
+        const val PERM_PRIVATE = "alex.carcar.photogallery.PRIVATE"
+        const val REQUEST_CODE = "REQUEST_CODE"
+        const val NOTIFICATION = "NOTIFICATION"
     }
 }
