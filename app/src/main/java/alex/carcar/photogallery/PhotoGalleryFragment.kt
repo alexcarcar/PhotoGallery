@@ -80,6 +80,7 @@ class PhotoGalleryFragment : Fragment() {
                 override fun onQueryTextSubmit(queryText: String): Boolean {
                     Log.d(TAG, "QueryTextSubmit: $queryText")
                     photoGalleryViewModel.fetchPhotos(queryText)
+                    searchView.clearFocus()
                     return true
                 }
 

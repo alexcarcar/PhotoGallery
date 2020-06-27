@@ -4,6 +4,7 @@
     <item
         android:id="@+id/menu_item_search"
         android:title="@string/search"
+        android:iconifiedByDefault="true"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom" />
     <item
