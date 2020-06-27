@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
 class PhotoPageActivity : AppCompatActivity() {
+    private lateinit var photoFragment: PhotoPageFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,11 +15,16 @@ class PhotoPageActivity : AppCompatActivity() {
         val fm = supportFragmentManager
         val currentFragment = fm.findFragmentById(R.id.fragment_container)
         if (currentFragment == null) {
-            val fragment = PhotoPageFragment.newInstance(intent.data!!)
+            photoFragment = PhotoPageFragment.newInstance(intent.data!!)
             fm.beginTransaction()
-                .add(R.id.fragment_container, fragment)
+                .add(R.id.fragment_container, photoFragment)
                 .commit()
         }
+    }
+    override fun onBackPressed() {
+        if (photoFragment.webView.canGoBack()) {
+            photoFragment.webView.goBack()
+        } else super.onBackPressed()
     }
 
     companion object {
