@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -154,8 +155,11 @@ class PhotoGalleryFragment : VisibleFragment() {
         }
 
         override fun onClick(view: View) {
-            val intent = PhotoPageActivity.newIntent(requireContext(), galleryItem.photoPageUri)
-            startActivity(intent)
+            CustomTabsIntent.Builder()
+                .setToolbarColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+                .setShowTitle(true)
+                .build()
+                .launchUrl(requireContext(), galleryItem.photoPageUri)
         }
     }
 
